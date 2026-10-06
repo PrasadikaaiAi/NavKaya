@@ -3045,6 +3045,13 @@ p {
   color: #063067;
 }
 
+.form-success a {
+  color: inherit;
+  font-weight: 900;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
 .contact-panel {
   align-self: start;
   padding: 32px;

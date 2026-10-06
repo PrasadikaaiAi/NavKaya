@@ -125,7 +125,43 @@ const designs = [
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 const ease = (value) => value * value * (3 - 2 * value)
+const easeInOutCubic = (value) =>
+  value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2
 const visibleMorePhotoCount = 2
+
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+function smoothScrollToTop(targetTop, duration = 820) {
+  const startTop = window.scrollY
+  const distance = targetTop - startTop
+
+  if (prefersReducedMotion() || Math.abs(distance) < 1) {
+    window.scrollTo(0, targetTop)
+    return () => {}
+  }
+
+  let frameId = 0
+  let cancelled = false
+  const startedAt = window.performance.now()
+
+  const step = (time) => {
+    if (cancelled) return
+
+    const progress = clamp((time - startedAt) / duration, 0, 1)
+    window.scrollTo(0, startTop + distance * easeInOutCubic(progress))
+
+    if (progress < 1) {
+      frameId = window.requestAnimationFrame(step)
+    }
+  }
+
+  frameId = window.requestAnimationFrame(step)
+
+  return () => {
+    cancelled = true
+    window.cancelAnimationFrame(frameId)
+  }
+}
 
 const getDesignGallery = (item) => [
   {
@@ -146,6 +182,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
   const sectionRef = useRef(null)
   const videoRefs = useRef([])
   const settleTimerRef = useRef(0)
+  const settleScrollCancelRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [lightbox, setLightbox] = useState(null)
   const activeIndex = Math.round(scrollProgress)
@@ -173,6 +210,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
 
     let frameId = 0
     let timeoutId = 0
+    let cancelScroll = () => {}
 
     const scrollToRequestedDesign = () => {
       const section = sectionRef.current
@@ -184,10 +222,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
       const targetTop = sectionTop + scrollableDistance * (requestedIndex / (designs.length - 1))
 
       setScrollProgress(requestedIndex)
-      window.scrollTo({
-        top: targetTop,
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      })
+      cancelScroll = smoothScrollToTop(targetTop, 900)
     }
 
     frameId = window.requestAnimationFrame(() => {
@@ -197,6 +232,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
     return () => {
       window.cancelAnimationFrame(frameId)
       window.clearTimeout(timeoutId)
+      cancelScroll()
     }
   }, [navigationTick])
 
@@ -261,6 +297,13 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
   }, [activeIndex])
 
   useEffect(() => {
+    function cancelSettleScroll() {
+      if (!settleScrollCancelRef.current) return
+
+      settleScrollCancelRef.current()
+      settleScrollCancelRef.current = null
+    }
+
     function getShowcaseMetrics() {
       const section = sectionRef.current
       if (!section) return null
@@ -298,18 +341,28 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
 
         if (Math.abs(window.scrollY - targetTop) < 10) return
 
-        window.scrollTo({
-          top: targetTop,
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-        })
-      }, 180)
+        cancelSettleScroll()
+        settleScrollCancelRef.current = smoothScrollToTop(targetTop, 920)
+      }, 320)
+    }
+
+    function handleUserScrollIntent() {
+      window.clearTimeout(settleTimerRef.current)
+      cancelSettleScroll()
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('wheel', handleUserScrollIntent, { passive: true })
+    window.addEventListener('touchstart', handleUserScrollIntent, { passive: true })
+    window.addEventListener('keydown', handleUserScrollIntent)
 
     return () => {
       window.clearTimeout(settleTimerRef.current)
+      cancelSettleScroll()
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('wheel', handleUserScrollIntent)
+      window.removeEventListener('touchstart', handleUserScrollIntent)
+      window.removeEventListener('keydown', handleUserScrollIntent)
     }
   }, [])
 

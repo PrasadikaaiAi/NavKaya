@@ -211,7 +211,7 @@ export default function About({ onNavigate }) {
           <img
             src="/assets/about-existing-space-bathroom.png"
             alt="3D bathroom layout showing vanity, toilet, shower, storage, lighting, and plants"
-            loading="lazy"
+            loading="eager"
             decoding="async"
           />
         </figure>
@@ -286,7 +286,7 @@ export default function About({ onNavigate }) {
                 <img
                   src={step.image}
                   alt={step.imageAlt}
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
                 />
               </figure>
@@ -318,7 +318,7 @@ export default function About({ onNavigate }) {
             <img
               src="/assets/about-one-team-bathroom.png"
               alt="NavKaya Baths team renovating a bathroom together"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
           </figure>

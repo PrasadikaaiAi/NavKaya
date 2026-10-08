@@ -145,7 +145,7 @@ export default function Footer({ onNavigate }) {
             <img
               src="/assets/footer-bathroom-blueprint.png"
               alt="Bathroom design blueprint"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
           </div>
@@ -158,7 +158,7 @@ export default function Footer({ onNavigate }) {
               src="/assets/prasadika-ai-logo.png"
               alt=""
               aria-hidden="true"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
             Developed by Prasadika AI

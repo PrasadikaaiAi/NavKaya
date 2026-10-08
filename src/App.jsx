@@ -5,6 +5,7 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Design from './pages/Design.jsx'
 import Contact from './pages/Contact.jsx'
+import { preloadSiteMedia } from './mediaAssets.js'
 
 const routes = {
   '/': Home,
@@ -43,6 +44,10 @@ export default function App() {
     const onPopState = () => setPath(getPath())
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  useEffect(() => {
+    preloadSiteMedia()
   }, [])
 
   useEffect(() => {
@@ -125,6 +130,7 @@ export default function App() {
             <img
               src="/assets/navkaya-logo-full.png"
               alt="NavKaya Baths"
+              loading="eager"
               decoding="async"
               fetchPriority="high"
             />
@@ -139,7 +145,7 @@ export default function App() {
             autoPlay
             muted
             loop
-            preload="metadata"
+            preload="auto"
             playsInline
             aria-hidden="true"
           />

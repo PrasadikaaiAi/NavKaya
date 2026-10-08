@@ -305,7 +305,7 @@ export default function Home({ onNavigate }) {
         src="/assets/workers-building-luxury-bathroom-1080p.mp4"
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         aria-label="NavKaya Baths home page bathroom showcase video"
       />
 
@@ -415,7 +415,7 @@ export default function Home({ onNavigate }) {
                           className="design-photo"
                           src={item.image}
                           alt={`${item.title} bathroom design`}
-                          loading={position === 'center' ? 'eager' : 'lazy'}
+                          loading="eager"
                           decoding="async"
                         />
                         <div className="design-card-shade">
@@ -473,7 +473,7 @@ export default function Home({ onNavigate }) {
                 className={`home-paragraph-photo${isHomeParagraphPhotoVisible ? ' is-visible' : ''}`}
                 src="/assets/navkaya-bath-composition.png"
                 alt="Complete bathroom fittings and design materials"
-                loading="lazy"
+                loading="eager"
                 decoding="async"
               />
             </div>

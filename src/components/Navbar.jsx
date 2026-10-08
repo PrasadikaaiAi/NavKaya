@@ -52,6 +52,7 @@ export default function Navbar({ currentPath, onNavigate }) {
         <img
           src="/assets/navkaya-logo-full.png"
           alt="NavKaya Baths logo"
+          loading="eager"
           decoding="async"
           fetchPriority="high"
         />

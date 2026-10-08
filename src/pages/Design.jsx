@@ -324,7 +324,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
             <img
               src="/assets/design-room-first-detail.png"
               alt="Bathroom room planning with measurements and plumbing points"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
             <h2>Room First</h2>
@@ -334,7 +334,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
             <img
               src="/assets/design-material-mood-detail.png"
               alt="Bathroom material palette with tile, stone, glass, mirrors, lighting, and metal finishes"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
             <h2>Material Mood</h2>
@@ -344,7 +344,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
             <img
               src="/assets/design-built-practical-detail.png"
               alt="Practical bathroom planning with cleaning, ventilation, storage, durability, and comfort"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
             <h2>Built Practical</h2>
@@ -383,7 +383,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                   src={item.video}
                   muted
                   loop
-                  preload={isActive ? 'auto' : 'metadata'}
+                  preload="auto"
                   playsInline
                   aria-hidden="true"
                 />
@@ -411,7 +411,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                         <img
                           src={item.image}
                           alt={`${item.title} bathroom design`}
-                          loading={isActive ? 'eager' : 'lazy'}
+                          loading="eager"
                           decoding="async"
                         />
                       </button>
@@ -429,7 +429,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                               <img
                                 src={photo.src}
                                 alt={photo.alt}
-                                loading={isActive ? 'eager' : 'lazy'}
+                                loading="eager"
                                 decoding="async"
                               />
                               {photoIndex === visibleMorePhotoCount - 1 && hiddenMorePhotoCount > 0 && (
@@ -469,6 +469,8 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
             <img
               src={lightbox.photos[lightbox.index].src}
               alt={lightbox.photos[lightbox.index].alt}
+              loading="eager"
+              decoding="async"
             />
             <figcaption>
               <span>{lightbox.title}</span>

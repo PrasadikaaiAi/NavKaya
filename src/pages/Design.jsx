@@ -181,7 +181,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
   const sectionRef = useRef(null)
   const panelRefs = useRef([])
   const videoRefs = useRef([])
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const [lightbox, setLightbox] = useState(null)
 
   const openLightbox = (item, photoIndex) => {
@@ -232,31 +232,34 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
   }, [navigationTick])
 
   useEffect(() => {
-    const panels = panelRefs.current.filter(Boolean)
-    if (panels.length === 0) return undefined
+    let frameId = 0
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const mostVisibleEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0]
+    function updateActivePanel() {
+      const activationLine = window.innerHeight * 0.52
+      const nextIndex = panelRefs.current.findIndex((panel) => {
+        if (!panel) return false
 
-        if (!mostVisibleEntry) return
+        const rect = panel.getBoundingClientRect()
+        return rect.top <= activationLine && rect.bottom >= activationLine
+      })
 
-        const nextIndex = Number(mostVisibleEntry.target.getAttribute('data-design-index'))
-        if (Number.isFinite(nextIndex)) setActiveIndex(nextIndex)
-      },
-      {
-        root: null,
-        rootMargin: '-22% 0px -34%',
-        threshold: [0.2, 0.35, 0.5, 0.65],
-      },
-    )
+      setActiveIndex(nextIndex)
+      frameId = 0
+    }
 
-    panels.forEach((panel) => observer.observe(panel))
+    function scheduleActivePanelUpdate() {
+      if (frameId) return
+      frameId = window.requestAnimationFrame(updateActivePanel)
+    }
+
+    updateActivePanel()
+    window.addEventListener('scroll', scheduleActivePanelUpdate, { passive: true })
+    window.addEventListener('resize', scheduleActivePanelUpdate)
 
     return () => {
-      observer.disconnect()
+      window.cancelAnimationFrame(frameId)
+      window.removeEventListener('scroll', scheduleActivePanelUpdate)
+      window.removeEventListener('resize', scheduleActivePanelUpdate)
     }
   }, [])
 

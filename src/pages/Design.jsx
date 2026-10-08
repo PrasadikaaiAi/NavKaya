@@ -124,7 +124,6 @@ const designs = [
 ]
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
-const ease = (value) => value * value * (3 - 2 * value)
 const easeInOutCubic = (value) =>
   value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2
 const visibleMorePhotoCount = 2
@@ -136,7 +135,7 @@ function smoothScrollToTop(targetTop, duration = 820) {
   const distance = targetTop - startTop
 
   if (prefersReducedMotion() || Math.abs(distance) < 1) {
-    window.scrollTo(0, targetTop)
+    window.scrollTo({ top: targetTop, behavior: 'instant' })
     return () => {}
   }
 
@@ -148,7 +147,7 @@ function smoothScrollToTop(targetTop, duration = 820) {
     if (cancelled) return
 
     const progress = clamp((time - startedAt) / duration, 0, 1)
-    window.scrollTo(0, startTop + distance * easeInOutCubic(progress))
+    window.scrollTo({ top: startTop + distance * easeInOutCubic(progress), behavior: 'instant' })
 
     if (progress < 1) {
       frameId = window.requestAnimationFrame(step)
@@ -180,12 +179,10 @@ const getRequestedDesignIndex = () => {
 
 export default function Design({ onNavigate, navigationTick = 0 }) {
   const sectionRef = useRef(null)
+  const panelRefs = useRef([])
   const videoRefs = useRef([])
-  const settleTimerRef = useRef(0)
-  const settleScrollCancelRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0)
   const [lightbox, setLightbox] = useState(null)
-  const activeIndex = Math.round(scrollProgress)
 
   const openLightbox = (item, photoIndex) => {
     setLightbox({
@@ -213,16 +210,14 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
     let cancelScroll = () => {}
 
     const scrollToRequestedDesign = () => {
-      const section = sectionRef.current
-      if (!section) return
+      const panel = panelRefs.current[requestedIndex]
+      if (!panel) return
 
-      const rect = section.getBoundingClientRect()
-      const sectionTop = window.scrollY + rect.top
-      const scrollableDistance = Math.max(section.offsetHeight - window.innerHeight, 1)
-      const targetTop = sectionTop + scrollableDistance * (requestedIndex / (designs.length - 1))
+      const rect = panel.getBoundingClientRect()
+      const targetTop = window.scrollY + rect.top - 76
 
-      setScrollProgress(requestedIndex)
-      cancelScroll = smoothScrollToTop(targetTop, 900)
+      setActiveIndex(requestedIndex)
+      cancelScroll = smoothScrollToTop(targetTop, 680)
     }
 
     frameId = window.requestAnimationFrame(() => {
@@ -237,47 +232,31 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
   }, [navigationTick])
 
   useEffect(() => {
-    let progressFrameId = 0
-    let currentProgress = 0
-    let targetProgress = 0
+    const panels = panelRefs.current.filter(Boolean)
+    if (panels.length === 0) return undefined
 
-    function measureProgress() {
-      const section = sectionRef.current
-      if (!section) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const mostVisibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0]
 
-      const rect = section.getBoundingClientRect()
-      const scrollableDistance = Math.max(section.offsetHeight - window.innerHeight, 1)
-      targetProgress = clamp((-rect.top / scrollableDistance) * (designs.length - 1), 0, designs.length - 1)
+        if (!mostVisibleEntry) return
 
-      if (!progressFrameId) {
-        progressFrameId = window.requestAnimationFrame(animateProgress)
-      }
-    }
+        const nextIndex = Number(mostVisibleEntry.target.getAttribute('data-design-index'))
+        if (Number.isFinite(nextIndex)) setActiveIndex(nextIndex)
+      },
+      {
+        root: null,
+        rootMargin: '-22% 0px -34%',
+        threshold: [0.2, 0.35, 0.5, 0.65],
+      },
+    )
 
-    function animateProgress() {
-      currentProgress += (targetProgress - currentProgress) * 0.36
-
-      if (Math.abs(targetProgress - currentProgress) < 0.002) {
-        currentProgress = targetProgress
-      }
-
-      setScrollProgress(currentProgress)
-
-      if (currentProgress !== targetProgress) {
-        progressFrameId = window.requestAnimationFrame(animateProgress)
-      } else {
-        progressFrameId = 0
-      }
-    }
-
-    measureProgress()
-    window.addEventListener('scroll', measureProgress, { passive: true })
-    window.addEventListener('resize', measureProgress)
+    panels.forEach((panel) => observer.observe(panel))
 
     return () => {
-      window.cancelAnimationFrame(progressFrameId)
-      window.removeEventListener('scroll', measureProgress)
-      window.removeEventListener('resize', measureProgress)
+      observer.disconnect()
     }
   }, [])
 
@@ -295,76 +274,6 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
       }
     })
   }, [activeIndex])
-
-  useEffect(() => {
-    function cancelSettleScroll() {
-      if (!settleScrollCancelRef.current) return
-
-      settleScrollCancelRef.current()
-      settleScrollCancelRef.current = null
-    }
-
-    function getShowcaseMetrics() {
-      const section = sectionRef.current
-      if (!section) return null
-
-      const rect = section.getBoundingClientRect()
-      const top = window.scrollY + rect.top
-      const scrollableDistance = Math.max(section.offsetHeight - window.innerHeight, 1)
-      const bottom = top + scrollableDistance
-
-      return { bottom, scrollableDistance, top }
-    }
-
-    function isInsideShowcase(metrics) {
-      if (!metrics) return false
-
-      return window.scrollY >= metrics.top - 2 && window.scrollY <= metrics.bottom + 2
-    }
-
-    function getTargetTop(index, metrics) {
-      return metrics.top + metrics.scrollableDistance * (index / (designs.length - 1))
-    }
-
-    function handleScroll() {
-      const metrics = getShowcaseMetrics()
-      if (!isInsideShowcase(metrics)) return
-
-      window.clearTimeout(settleTimerRef.current)
-      settleTimerRef.current = window.setTimeout(() => {
-        const latestMetrics = getShowcaseMetrics()
-        if (!isInsideShowcase(latestMetrics)) return
-
-        const progress = ((window.scrollY - latestMetrics.top) / latestMetrics.scrollableDistance) * (designs.length - 1)
-        const nextIndex = clamp(Math.round(progress), 0, designs.length - 1)
-        const targetTop = getTargetTop(nextIndex, latestMetrics)
-
-        if (Math.abs(window.scrollY - targetTop) < 10) return
-
-        cancelSettleScroll()
-        settleScrollCancelRef.current = smoothScrollToTop(targetTop, 920)
-      }, 320)
-    }
-
-    function handleUserScrollIntent() {
-      window.clearTimeout(settleTimerRef.current)
-      cancelSettleScroll()
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('wheel', handleUserScrollIntent, { passive: true })
-    window.addEventListener('touchstart', handleUserScrollIntent, { passive: true })
-    window.addEventListener('keydown', handleUserScrollIntent)
-
-    return () => {
-      window.clearTimeout(settleTimerRef.current)
-      cancelSettleScroll()
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('wheel', handleUserScrollIntent)
-      window.removeEventListener('touchstart', handleUserScrollIntent)
-      window.removeEventListener('keydown', handleUserScrollIntent)
-    }
-  }, [])
 
   useEffect(() => {
     if (!lightbox) return undefined
@@ -449,27 +358,18 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
       >
         <div className="design-showcase-sticky">
           {designs.map((item, index) => {
-            const offset = index - scrollProgress
-            const rawDistance = Math.abs(offset)
             const isActive = index === activeIndex
-            const motionAmount = ease(clamp((rawDistance - 0.12) / 0.62, 0, 1))
-            const layerOpacity = 1 - motionAmount
             const visibleMorePhotos = (item.morePhotos || []).slice(0, visibleMorePhotoCount)
             const hiddenMorePhotoCount = Math.max((item.morePhotos || []).length - visibleMorePhotoCount, 0)
 
             return (
               <article
                 className="design-reel-panel"
+                data-design-index={index}
                 data-active={isActive ? 'true' : 'false'}
                 key={item.title}
-                aria-hidden={!isActive}
-                style={{
-                  '--panel-opacity': layerOpacity,
-                  '--video-opacity': 0.42 + layerOpacity * 0.58,
-                  '--video-scale': 1.01 + motionAmount * 0.024,
-                  '--copy-shift': `${motionAmount * -38}px`,
-                  '--photo-shift': `${motionAmount * 46}px`,
-                  '--photo-scale': 1 + motionAmount * 0.016,
+                ref={(node) => {
+                  panelRefs.current[index] = node
                 }}
               >
                 <video
@@ -493,7 +393,6 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                     <button
                       type="button"
                       onClick={() => onNavigate('/contact')}
-                      tabIndex={isActive ? 0 : -1}
                     >
                       Book Consultation
                     </button>
@@ -504,7 +403,6 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                         className="design-photo-button"
                         type="button"
                         onClick={() => openLightbox(item, 0)}
-                        tabIndex={isActive ? 0 : -1}
                         aria-label={`Open ${item.title} design photo`}
                       >
                         <img
@@ -523,7 +421,6 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                               className="design-photo-button"
                               type="button"
                               onClick={() => openLightbox(item, photoIndex + 1)}
-                              tabIndex={isActive ? 0 : -1}
                               aria-label={`Open ${photo.alt}`}
                             >
                               <img

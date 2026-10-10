@@ -53,25 +53,7 @@ export const imageAssets = [
   '/assets/vanity-round-mirror-detail.png',
 ]
 
-export const videoAssets = [
-  '/assets/bathroom-build-scroll.mp4',
-  '/assets/bathroom-build.mp4',
-  '/assets/contact-page-video.mp4',
-  '/assets/design-commercial-washrooms-video.mp4',
-  '/assets/design-luxury-baths-video.mp4',
-  '/assets/design-modern-compact-video.mp4',
-  '/assets/design-powder-room-video.mp4',
-  '/assets/design-vanity-video.mp4',
-  '/assets/home-workers-building-luxury-bathroom-1080p.mp4',
-  '/assets/navkaya-home-main.mp4',
-  '/assets/navkaya-home-scroll.mp4',
-  '/assets/navkaya-home-source.mp4',
-  '/assets/workers-building-luxury-bathroom-1080p.mp4',
-  '/assets/workers-building-modern-luxury-bath.mp4',
-]
-
 const preloadedImages = new Map()
-const preloadedVideos = new Map()
 let hasStartedPreloading = false
 
 export function preloadSiteMedia() {
@@ -85,15 +67,5 @@ export function preloadSiteMedia() {
     image.loading = 'eager'
     image.src = src
     preloadedImages.set(src, image)
-  })
-
-  videoAssets.forEach((src) => {
-    const video = document.createElement('video')
-    video.muted = true
-    video.playsInline = true
-    video.preload = 'auto'
-    video.src = src
-    video.load()
-    preloadedVideos.set(src, video)
   })
 }

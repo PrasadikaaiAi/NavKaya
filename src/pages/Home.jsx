@@ -90,16 +90,13 @@ const renderDesignDescription = (item) => {
 }
 
 export default function Home({ onNavigate }) {
-  const videoRef = useRef(null)
   const whySectionRef = useRef(null)
-  const footerBoundaryRef = useRef(null)
   const homeParagraphPhotoRef = useRef(null)
   const [activeDesignIndex, setActiveDesignIndex] = useState(0)
   const [isCarouselPaused, setIsCarouselPaused] = useState(false)
   const [isWhySectionVisible, setIsWhySectionVisible] = useState(false)
   const [visibleWhyReasons, setVisibleWhyReasons] = useState(() => new Set())
   const [isHomeParagraphPhotoVisible, setIsHomeParagraphPhotoVisible] = useState(false)
-  const [isHomeVideoActive, setIsHomeVideoActive] = useState(true)
 
   const showPreviousDesign = () => {
     setActiveDesignIndex((currentIndex) =>
@@ -126,88 +123,6 @@ export default function Home({ onNavigate }) {
 
     return () => window.clearInterval(carouselInterval)
   }, [isCarouselPaused])
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return undefined
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion) {
-      video.currentTime = 0
-      return undefined
-    }
-
-    let duration = 0
-    let animationFrame = 0
-    let currentTime = 0
-    let lastSeekAt = 0
-    let targetTime = 0
-    const maxSeekRate = 1000 / 24
-
-    const clamp = (value) => Math.min(Math.max(value, 0), 1)
-
-    const updateTargetTime = () => {
-      if (!duration || Number.isNaN(duration)) return
-      const footerBoundary = footerBoundaryRef.current
-      const videoEnd = footerBoundary
-        ? window.scrollY + footerBoundary.getBoundingClientRect().top
-        : document.documentElement.scrollHeight
-      const maxVideoScroll = Math.max(videoEnd - window.innerHeight, 1)
-      const progress = clamp(window.scrollY / maxVideoScroll)
-      setIsHomeVideoActive((currentValue) => {
-        const nextValue = window.scrollY < maxVideoScroll - 2
-        return currentValue === nextValue ? currentValue : nextValue
-      })
-      targetTime = progress * duration
-    }
-
-    const scrubVideo = (timestamp = 0) => {
-      if (duration && !Number.isNaN(duration)) {
-        const timeGap = targetTime - currentTime
-        currentTime = Math.abs(timeGap) > 1.1 ? targetTime : currentTime + timeGap * 0.18
-        const nextTime = clamp(currentTime / duration) * duration
-
-        if (
-          !video.seeking &&
-          timestamp - lastSeekAt >= maxSeekRate &&
-          Math.abs(video.currentTime - nextTime) > 0.025
-        ) {
-          video.currentTime = nextTime
-          lastSeekAt = timestamp
-        }
-      }
-
-      animationFrame = window.requestAnimationFrame(scrubVideo)
-    }
-
-    const handleMetadataLoaded = () => {
-      duration = video.duration
-      updateTargetTime()
-      currentTime = targetTime
-      video.currentTime = targetTime
-    }
-
-    const handleScroll = () => {
-      updateTargetTime()
-    }
-
-    if (video.readyState >= 1) {
-      handleMetadataLoaded()
-    }
-
-    video.pause()
-    animationFrame = window.requestAnimationFrame(scrubVideo)
-    video.addEventListener('loadedmetadata', handleMetadataLoaded)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', handleScroll)
-
-    return () => {
-      video.removeEventListener('loadedmetadata', handleMetadataLoaded)
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
-      window.cancelAnimationFrame(animationFrame)
-    }
-  }, [])
 
   useEffect(() => {
     const section = whySectionRef.current
@@ -300,9 +215,10 @@ export default function Home({ onNavigate }) {
   return (
     <div className="page home-page">
       <video
-        ref={videoRef}
-        className={`scroll-video${isHomeVideoActive ? '' : ' is-stopped'}`}
+        className="scroll-video"
         src="/assets/workers-building-luxury-bathroom-1080p.mp4"
+        autoPlay
+        loop
         muted
         playsInline
         preload="auto"
@@ -480,7 +396,7 @@ export default function Home({ onNavigate }) {
           </section>
         </div>
       </div>
-      <div ref={footerBoundaryRef}>
+      <div>
         <Footer onNavigate={onNavigate} />
       </div>
     </div>

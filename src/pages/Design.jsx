@@ -381,6 +381,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                     videoRefs.current[index] = node
                   }}
                   src={item.video}
+                  poster={item.image}
                   muted
                   loop
                   preload="auto"

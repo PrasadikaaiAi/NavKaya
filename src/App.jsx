@@ -142,6 +142,7 @@ export default function App() {
           <video
             className="contact-shell-video"
             src="/assets/contact-page-video.mp4"
+            poster="/assets/contact-page-video-poster.jpg"
             autoPlay
             muted
             loop

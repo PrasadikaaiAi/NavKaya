@@ -274,6 +274,7 @@ export default function Home({ onNavigate }) {
         ref={scrollVideoRef}
         className="scroll-video"
         src="/assets/workers-renovating-luxury-bathroom-1080p.mp4"
+        poster="/assets/workers-renovating-luxury-bathroom-poster.jpg"
         muted
         playsInline
         preload="auto"

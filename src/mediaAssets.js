@@ -11,6 +11,7 @@ export const imageAssets = [
   '/assets/commercial-washroom-urinal-wall-view.png',
   '/assets/commercial-washroom-vanity-angle-large.png',
   '/assets/commercial-washroom-vanity-angle.png',
+  '/assets/contact-page-video-poster.jpg',
   '/assets/design-built-practical-detail.png',
   '/assets/design-commercial-washrooms.png',
   '/assets/design-family-utility.png',
@@ -51,6 +52,7 @@ export const imageAssets = [
   '/assets/vanity-design.png',
   '/assets/vanity-partition-mirror-detail.png',
   '/assets/vanity-round-mirror-detail.png',
+  '/assets/workers-renovating-luxury-bathroom-poster.jpg',
 ]
 
 const preloadedImages = new Map()

@@ -489,7 +489,7 @@ main {
   width: calc(100vw * var(--site-scale-compensation));
   height: calc(116vh * var(--site-scale-compensation));
   object-fit: cover;
-  background: #061d3f;
+  background: #061d3f url('/assets/workers-renovating-luxury-bathroom-poster.jpg') center / cover no-repeat;
   backface-visibility: hidden;
   transform: translate3d(0, var(--video-y), 0) scale(var(--video-scale));
   transform-origin: center;
@@ -1144,7 +1144,7 @@ p {
   width: calc(100vw * var(--site-scale-compensation));
   height: calc(100vh * var(--site-scale-compensation));
   object-fit: cover;
-  background: #061d3f;
+  background: #061d3f url('/assets/contact-page-video-poster.jpg') center / cover no-repeat;
   filter: saturate(1.06) contrast(1.03);
   pointer-events: none;
   transform: translateZ(0);

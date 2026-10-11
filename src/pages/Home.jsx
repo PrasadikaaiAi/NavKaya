@@ -90,6 +90,8 @@ const renderDesignDescription = (item) => {
 }
 
 export default function Home({ onNavigate }) {
+  const homePageRef = useRef(null)
+  const scrollVideoRef = useRef(null)
   const whySectionRef = useRef(null)
   const homeParagraphPhotoRef = useRef(null)
   const [activeDesignIndex, setActiveDesignIndex] = useState(0)
@@ -123,6 +125,60 @@ export default function Home({ onNavigate }) {
 
     return () => window.clearInterval(carouselInterval)
   }, [isCarouselPaused])
+
+  useEffect(() => {
+    const page = homePageRef.current
+    const video = scrollVideoRef.current
+
+    if (!page || !video) return undefined
+
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let animationFrameId = 0
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+
+    const updateVideo = () => {
+      animationFrameId = 0
+
+      const scrollableDistance = Math.max(page.offsetHeight - window.innerHeight, 1)
+      const progress = clamp(-page.getBoundingClientRect().top / scrollableDistance, 0, 1)
+
+      video.style.setProperty('--video-y', `${-70 * progress}px`)
+      video.style.setProperty('--video-scale', `${1.04 + progress * 0.035}`)
+
+      if (
+        motionQuery.matches ||
+        !Number.isFinite(video.duration) ||
+        video.duration <= 0
+      ) {
+        return
+      }
+
+      const targetTime = progress * Math.max(video.duration - 0.08, 0)
+
+      if (Math.abs(video.currentTime - targetTime) > 0.05) {
+        video.currentTime = targetTime
+      }
+    }
+
+    const requestUpdate = () => {
+      if (animationFrameId) return
+      animationFrameId = window.requestAnimationFrame(updateVideo)
+    }
+
+    video.pause()
+    video.addEventListener('loadedmetadata', requestUpdate)
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+    requestUpdate()
+
+    return () => {
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId)
+      video.removeEventListener('loadedmetadata', requestUpdate)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+    }
+  }, [])
 
   useEffect(() => {
     const section = whySectionRef.current
@@ -213,12 +269,11 @@ export default function Home({ onNavigate }) {
   }, [])
 
   return (
-    <div className="page home-page">
+    <div className="page home-page" ref={homePageRef}>
       <video
+        ref={scrollVideoRef}
         className="scroll-video"
-        src="/assets/workers-building-luxury-bathroom-1080p.mp4"
-        autoPlay
-        loop
+        src="/assets/workers-renovating-luxury-bathroom-1080p.mp4"
         muted
         playsInline
         preload="auto"

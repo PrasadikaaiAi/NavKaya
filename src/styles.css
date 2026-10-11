@@ -480,15 +480,19 @@ main {
 }
 
 .scroll-video {
+  --video-y: 0px;
+  --video-scale: 1.04;
   position: fixed;
-  inset: 0;
+  top: calc(-8vh * var(--site-scale-compensation));
+  left: 0;
   z-index: 0;
   width: calc(100vw * var(--site-scale-compensation));
-  height: calc(100vh * var(--site-scale-compensation));
+  height: calc(116vh * var(--site-scale-compensation));
   object-fit: cover;
   background: #061d3f;
   backface-visibility: hidden;
-  transform: translateZ(0);
+  transform: translate3d(0, var(--video-y), 0) scale(var(--video-scale));
+  transform-origin: center;
   opacity: 1;
   pointer-events: none;
   transition: opacity 280ms ease;

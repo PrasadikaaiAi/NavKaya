@@ -155,52 +155,50 @@ export default function About({ onNavigate }) {
   return (
     <div className="page inner-page about-page">
       <section className="page-heading about-hero">
-        <h1>About NavKaya Baths</h1>
+        <h1>About<br /><span className="about-title-name">NavKaya Baths</span></h1>
         <div className="about-hero-copy">
           <p className="about-hero-statement">
-            We Don&apos;t Just Renovate Bathrooms. We Transform Them.
+            Bathroom Renovation Experts in Jaipur
           </p>
           <p>
-            NavKaya Baths is a Jaipur-based bathroom renovation company founded by an
-            experienced Civil Engineer and supported by a team of skilled professionals
-            specialising in complete bathroom transformations.
+            <strong>NavKaya Baths</strong>, a brand of <strong>NavKaya Technologies</strong>{' '}
+            specializes in complete <strong>residential and commercial bathroom renovation</strong>,
+            led by an experienced Civil Engineer and supported by a skilled team of professionals.
           </p>
           <p>
-            We believe a well-designed bathroom should do more than look beautiful. It should
-            be practical, comfortable, durable and thoughtfully planned around the people who
-            use it every day.
+            From space planning and Vastu-based modern layouts to dismantling, waterproofing,
+            plumbing, tiling, sanitary ware, and CP fittings, we provide{' '}
+            <strong>end-to-end renovation solutions</strong> tailored to your needs and budget.
           </p>
           <p>
-            That is why we bring engineering expertise, contemporary design and professional execution
-            together under one roof.
-          </p>
-          <p>
-            From understanding your existing space and developing the right layout to selecting
-            finishes and managing the complete on-site execution, our team takes care of every
-            stage of your bathroom renovation.
+            Combining engineering expertise with contemporary design, we transform existing
+            bathrooms in homes, apartments, offices, hotels, and other commercial spaces into{' '}
+            <strong>functional, elegant, and modern environments</strong> built for comfort,
+            quality, and durability.
           </p>
         </div>
       </section>
 
       <section className="section about-split-section">
         <div className="about-existing-space-copy">
-          <p className="eyebrow">From an Existing Space to a Better Bathroom</p>
-          <h2>Every bathroom comes with its own possibilities and challenges.</h2>
+          <p className="eyebrow">From Existing Space to an Exceptional Bathroom</p>
           <div className="about-copy-stack">
             <p>
-              Before thinking about finishes and aesthetics, we study the existing space,
-              measurements, plumbing requirements, movement, functionality and available area.
-              This allows us to create a bathroom that is not only visually appealing but also
-              works efficiently in everyday life.
+              At <strong>NavKaya Baths</strong>, we transform bathrooms into well-planned,
+              functional and beautiful spaces. Every project begins with a detailed assessment
+              of space, measurements, plumbing and everyday needs to ensure optimal space
+              utilization, lasting comfort and modern aesthetics.
             </p>
             <p>
-              Our complete renovation solutions cover space planning, 2D &amp; 3D design,
-              civil work, waterproofing, plumbing, electrical work, tiling, sanitaryware, CP
-              fittings, fixture installation and final finishing.
+              From <strong>2D/3D design to civil work, waterproofing, plumbing, electrical work,
+              tiling, sanitary fittings and final finishing</strong>, we manage every stage
+              under one roof.
             </p>
             <p>
-              Instead of coordinating multiple contractors, vendors and different stages of work
-              yourself, you get one team managing the entire transformation from start to finish.
+              <strong>One Team. One Solution. Complete Peace of Mind.</strong> No hassle of
+              coordinating multiple contractors, transparent stage-wise payments as work
+              progresses, quality workmanship and warranty-backed renovation—all designed to
+              deliver a durable, stylish bathroom with greater convenience and confidence.
             </p>
           </div>
         </div>
@@ -225,13 +223,13 @@ export default function About({ onNavigate }) {
           <p className="eyebrow">Our Vision</p>
           <h2>Better Bathrooms. Better Everyday Living.</h2>
           <p>
-            Our vision is to redefine bathroom renovation by creating spaces where{' '}
-            thoughtful design, engineering precision and everyday functionality come together seamlessly.
-          </p>
-          <p>
-            We aim to make professionally designed and executed bathrooms more accessible while
-            setting a higher standard for quality, transparency and customer experience in
-            bathroom renovation.
+            To become a trusted leader in residential and commercial bathroom renovation by
+            transforming existing spaces into modern, elegant, functional, and durable bathrooms.
+            We aim to combine innovative design, exceptional craftsmanship, and high-quality
+            materials to create spaces that offer comfort, style, and long-lasting performance.
+            With a strong commitment to quality and customer satisfaction, we strive to redefine
+            bathroom renovation standards and deliver spaces that enhance everyday living and
+            exceed expectations.
           </p>
         </article>
         <article
@@ -241,18 +239,14 @@ export default function About({ onNavigate }) {
           <p className="eyebrow">Our Mission</p>
           <h2>Designed with Purpose. Built with Precision.</h2>
           <p>
-            Our mission is to simplify the entire bathroom renovation journey by providing a{' '}
-            complete, professionally managed solution under one roof.
-          </p>
-          <p>
-            From understanding the space and visualising the design to selecting the right
-            materials and managing execution, we are committed to delivering bathrooms that
-            balance aesthetics, functionality, durability and comfort.
-          </p>
-          <p>
-            Every project is approached with clear communication, transparent processes, careful
-            planning and attention to detail&mdash;so our clients can renovate with greater
-            confidence and less complexity.
+            To deliver comprehensive, end-to-end bathroom renovation solutions by combining
+            engineering expertise, contemporary design, premium-quality materials, transparent
+            pricing, and professional execution. We are committed to transforming residential
+            and commercial bathrooms into stylish, functional, and durable spaces that meet
+            the unique needs of every client. Through meticulous planning, innovative solutions,
+            attention to detail, and seamless project management, we strive to ensure exceptional
+            craftsmanship, complete customer satisfaction, enhanced comfort, and lasting value
+            in every project we undertake.
           </p>
         </article>
       </section>
@@ -308,7 +302,7 @@ export default function About({ onNavigate }) {
               type="button"
               onClick={() => onNavigate('/contact')}
             >
-              Book Consultation
+              Book free consultation
             </button>
           </div>
           <figure

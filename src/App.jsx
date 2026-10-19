@@ -137,6 +137,7 @@ export default function App() {
           </div>
         </div>
       )}
+      <Navbar currentPath={path} onNavigate={navigate} />
       {path === '/contact' ? (
         <div className="contact-video-section">
           <video
@@ -150,18 +151,14 @@ export default function App() {
             playsInline
             aria-hidden="true"
           />
-          <Navbar currentPath={path} onNavigate={navigate} />
           <main>
             <Page onNavigate={navigate} navigationTick={navigationTick} />
           </main>
         </div>
       ) : (
-        <>
-          <Navbar currentPath={path} onNavigate={navigate} />
-          <main>
-            <Page onNavigate={navigate} navigationTick={navigationTick} />
-          </main>
-        </>
+        <main>
+          <Page onNavigate={navigate} navigationTick={navigationTick} />
+        </main>
       )}
       {path !== '/contact' && (
         <a

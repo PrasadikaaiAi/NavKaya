@@ -41,28 +41,20 @@ const designs = [
 
 const whyReasons = [
   {
-    title: 'Everything Under One Roof',
-    text: 'One team manages the complete renovation, from planning and design to construction, installation and final handover.',
+    title: 'One-Stop Bathroom Renovation Solutions',
+    text: 'Complete renovation from concept to completion.',
   },
   {
-    title: 'See It Before We Build It',
-    text: 'Our 2D layouts and 3D visualisations give you greater clarity and confidence before execution begins.',
+    title: 'Transparency at Every Step',
+    text: 'Clear quotations, stage-wise payments and hassle-free execution.',
   },
   {
-    title: 'Transparent from the Beginning',
-    text: 'Clear quotations, defined scope and a structured payment process help keep your project transparent and predictable.',
+    title: 'Quality You Can Trust',
+    text: 'Premium brands, expert craftsmanship and lasting durability.',
   },
   {
-    title: 'Designed Around Everyday Life',
-    text: 'We optimise available space with careful attention to movement, storage, ventilation, cleaning and long-term comfort.',
-  },
-  {
-    title: 'Quality Beyond the Finish',
-    text: 'A beautiful bathroom is only as good as what lies beneath it. We focus on proper waterproofing, plumbing, quality materials and professional workmanship for lasting performance.',
-  },
-  {
-    title: 'Professionally Managed',
-    text: 'Every stage is planned and coordinated with a focus on quality, communication and completion according to the agreed project schedule, backed by our applicable workmanship warranty.',
+    title: 'Luxury Meets Functionality',
+    text: 'Thoughtfully designed bathrooms for everyday comfort.',
   },
 ]
 
@@ -121,7 +113,7 @@ export default function Home({ onNavigate }) {
 
     const carouselInterval = window.setInterval(() => {
       setActiveDesignIndex((currentIndex) => (currentIndex + 1) % designs.length)
-    }, 2600)
+    }, 8000)
 
     return () => window.clearInterval(carouselInterval)
   }, [isCarouselPaused])
@@ -300,10 +292,11 @@ export default function Home({ onNavigate }) {
         <section
           ref={whySectionRef}
           className={`section why-section${isWhySectionVisible ? ' is-visible' : ''}`}
+          aria-labelledby="why-section-title"
         >
+          <h2 className="why-section-title" id="why-section-title">Why clients choose us?</h2>
           <div className="why-heading">
-            <p className="eyebrow">Why clients choose us</p>
-            <h2>Durable <span>bathrooms</span> that still feel refined.</h2>
+            <h3>Durable <span>bathrooms</span> that still feel refined.</h3>
             <p>
               Every bathroom is planned for real routines: easy cleaning, reliable
               drainage, smart storage, warm lighting, and finishes that hold up after
@@ -318,6 +311,9 @@ export default function Home({ onNavigate }) {
                 className={`why-reason-card${visibleWhyReasons.has(String(index)) ? ' is-visible' : ''}`}
                 data-reason={String(index)}
               >
+                <span className="why-check" aria-hidden="true">
+                  <img src="/assets/why-choose-us-tick.png" alt="" width="44" height="44" />
+                </span>
                 <div>
                   <h3>{reason.title}</h3>
                   <p>{reason.text}</p>
@@ -379,6 +375,8 @@ export default function Home({ onNavigate }) {
                           if (position === 'center') setIsCarouselPaused(true)
                         }}
                         onMouseLeave={() => setIsCarouselPaused(false)}
+                        onFocus={() => setIsCarouselPaused(true)}
+                        onBlur={() => setIsCarouselPaused(false)}
                         role="button"
                         style={{ '--design-offset': offset }}
                         tabIndex={position === 'center' ? 0 : -1}
@@ -428,16 +426,18 @@ export default function Home({ onNavigate }) {
             <div className="home-paragraph-content">
               <div className="home-paragraph-copy">
                 <div>
-                  <h2>Designed with care, built for everyday comfort.</h2>
+                  <h2>Start Your Dream Bathroom Transformation<br />with NavKaya Baths</h2>
                 </div>
                 <p>
-                  At NavKaya Baths, every bathroom begins with the way you live. From
-                  layout planning and material selection to fittings, lighting, storage,
-                  and final execution, we shape each detail into a calm, durable, and
-                  beautifully finished space made for everyday comfort.
+                  Are you ready to finally transform your outdated or inefficient bathroom
+                  into a beautiful, functional, and durable bathroom?
+                </p>
+                <p>
+                  NavKaya Baths is your trusted partner specializing in high quality
+                  bathroom remodelling across Jaipur.
                 </p>
                 <button type="button" onClick={() => onNavigate('/contact')}>
-                  Book Consultation
+                  Book free consultation
                 </button>
               </div>
               <img

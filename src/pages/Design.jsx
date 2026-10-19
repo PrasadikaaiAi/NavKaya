@@ -214,7 +214,8 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
       if (!panel) return
 
       const rect = panel.getBoundingClientRect()
-      const targetTop = window.scrollY + rect.top - 76
+      const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0
+      const targetTop = window.scrollY + rect.top - headerHeight - 16
 
       setActiveIndex(requestedIndex)
       cancelScroll = smoothScrollToTop(targetTop, 680)
@@ -398,7 +399,7 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                       type="button"
                       onClick={() => onNavigate('/contact')}
                     >
-                      Book Consultation
+                      Book free consultation
                     </button>
                   </div>
                   <div className="design-reel-media">

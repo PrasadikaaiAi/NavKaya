@@ -2,6 +2,13 @@ import { useState } from 'react'
 
 const whatsappNumber = '917850868117'
 const contactEmail = 'info@navkayabaths.com'
+const pinCodes = [
+  '302001', '302002', '302003', '302004', '302005', '302006',
+  '302011', '302012', '302013', '302015', '302016', '302017',
+  '302018', '302019', '302020', '302021', '302022', '302023',
+  '302024', '302025', '302026', '302027', '302028', '302029',
+  '302031', '302033', '302034', '302039',
+]
 
 function getFormValue(formData, key) {
   return String(formData.get(key) || '').trim()
@@ -10,8 +17,8 @@ function getFormValue(formData, key) {
 function buildLeadMessage(formData) {
   const name = getFormValue(formData, 'name')
   const phone = getFormValue(formData, 'phone')
-  const email = getFormValue(formData, 'email')
-  const design = getFormValue(formData, 'design')
+  const city = getFormValue(formData, 'city')
+  const pinCode = getFormValue(formData, 'pinCode')
   const details = getFormValue(formData, 'details')
 
   return [
@@ -19,8 +26,8 @@ function buildLeadMessage(formData) {
     '',
     `Name: ${name}`,
     `Phone: ${phone}`,
-    email ? `Email: ${email}` : '',
-    `Design: ${design}`,
+    `City: ${city}`,
+    `Pin Code: ${pinCode}`,
     details ? `Project details: ${details}` : '',
   ]
     .filter(Boolean)
@@ -70,17 +77,18 @@ export default function Contact() {
             <input type="tel" name="phone" placeholder="+91 98765 43210" required />
           </label>
           <label>
-            Email address
-            <input type="email" name="email" placeholder="you@example.com" />
+            City
+            <select name="city" defaultValue="Jaipur" autoComplete="address-level2" required>
+              <option value="Jaipur">Jaipur</option>
+            </select>
           </label>
           <label>
-            Design
-            <select name="design" defaultValue="luxury-baths">
-              <option value="luxury-baths">Luxury Baths</option>
-              <option value="commercial-washrooms">Commercial Washrooms</option>
-              <option value="modern-compact">Modern Compact</option>
-              <option value="powder-room">Powder Room</option>
-              <option value="vanity">Vanity Unit</option>
+            Pin Code
+            <select name="pinCode" defaultValue="" autoComplete="postal-code" required>
+              <option value="" disabled>Select Pin Code</option>
+              {pinCodes.map((pinCode) => (
+                <option key={pinCode} value={pinCode}>{pinCode}</option>
+              ))}
             </select>
           </label>
           <label>
@@ -91,7 +99,7 @@ export default function Contact() {
               placeholder="Tell us about room size, location, preferred style, and timeline."
             />
           </label>
-          <button type="submit">Send enquiry on WhatsApp</button>
+          <button type="submit">Send enquiry</button>
           {leadLinks && (
             <p className="form-success">
               Thank you. Your enquiry is ready to send on WhatsApp. If it did not open,{' '}

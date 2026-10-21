@@ -75,6 +75,21 @@ const vanityMorePhotos = [
   },
 ]
 
+const seniorCitizenWashroomMorePhotos = [
+  {
+    src: '/assets/senior-citizen-washroom-vanity-angle.png',
+    alt: 'Senior citizen washroom vanity angle with illuminated mirror, accessible basin, toilet grab bars, and shower seat',
+  },
+  {
+    src: '/assets/senior-citizen-washroom-shower-detail.png',
+    alt: 'Senior citizen washroom shower with rainfall shower, handheld shower, grab bars, and built-in seat',
+  },
+  {
+    src: '/assets/senior-citizen-washroom-toilet-detail.png',
+    alt: 'Senior citizen washroom toilet with folding support rail and wall-mounted grab bar',
+  },
+]
+
 const designs = [
   {
     slug: 'luxury-baths',
@@ -111,6 +126,15 @@ const designs = [
     morePhotos: powderRoomMorePhotos,
     description:
       'A powder room is a compact yet stylish space designed primarily for guests. Elegant finishes and thoughtful lighting create a welcoming, sophisticated atmosphere. Smart layouts maximize comfort and functionality within a smaller footprint. Designer fixtures and refined details give the space a distinctive, luxurious character.',
+  },
+  {
+    slug: 'senior-citizen-washrooms',
+    title: 'Senior Citizen Washrooms',
+    video: '/assets/design-senior-citizen-washrooms-video.mp4',
+    image: '/assets/senior-citizen-washroom-full-view.jpeg',
+    morePhotos: seniorCitizenWashroomMorePhotos,
+    description:
+      'A thoughtfully designed senior citizen washroom that combines safety, comfort, and elegance. Featuring anti-slip flooring, sturdy grab bars, accessible fixtures, and spacious layouts, it ensures ease of movement, independence, and a secure bathing experience.',
   },
   {
     slug: 'vanity',
@@ -376,19 +400,28 @@ export default function Design({ onNavigate, navigationTick = 0 }) {
                   panelRefs.current[index] = node
                 }}
               >
-                <video
-                  className="design-reel-video"
-                  ref={(node) => {
-                    videoRefs.current[index] = node
-                  }}
-                  src={item.video}
-                  poster={item.image}
-                  muted
-                  loop
-                  preload="auto"
-                  playsInline
-                  aria-hidden="true"
-                />
+                {item.video ? (
+                  <video
+                    className="design-reel-video"
+                    ref={(node) => {
+                      videoRefs.current[index] = node
+                    }}
+                    src={item.video}
+                    poster={item.image}
+                    muted
+                    loop
+                    preload="auto"
+                    playsInline
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <img
+                    className="design-reel-video"
+                    src={item.image}
+                    alt=""
+                    aria-hidden="true"
+                  />
+                )}
                 <div className="design-reel-overlay" />
                 <div className="design-reel-content">
                   <div className="design-reel-copy">

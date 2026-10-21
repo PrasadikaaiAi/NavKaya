@@ -37,6 +37,13 @@ const designs = [
     notes: [],
     image: '/assets/powder-room.png',
   },
+  {
+    slug: 'senior-citizen-washrooms',
+    title: 'Senior Citizen Washrooms',
+    description: 'A thoughtfully designed senior citizen washroom that combines safety, comfort, and elegance. Featuring anti-slip flooring, sturdy grab bars, accessible fixtures, and spacious layouts, it ensures ease of movement, independence, and a secure bathing experience.',
+    notes: [],
+    image: '/assets/design-senior-citizen-washrooms.png',
+  },
 ]
 
 const whyReasons = [
@@ -113,7 +120,7 @@ export default function Home({ onNavigate }) {
 
     const carouselInterval = window.setInterval(() => {
       setActiveDesignIndex((currentIndex) => (currentIndex + 1) % designs.length)
-    }, 8000)
+    }, 3000)
 
     return () => window.clearInterval(carouselInterval)
   }, [isCarouselPaused])

@@ -161,19 +161,19 @@ export default function About({ onNavigate }) {
             Bathroom Renovation Experts in Jaipur
           </p>
           <p>
-            <strong>NavKaya Baths</strong>, a brand of <strong>NavKaya Technologies</strong>{' '}
-            specializes in complete <strong>residential and commercial bathroom renovation</strong>,
+            NavKaya Baths, a brand of NavKaya Technologies{' '}
+            specializes in complete residential and commercial bathroom renovation,
             led by an experienced Civil Engineer and supported by a skilled team of professionals.
           </p>
           <p>
             From space planning and Vastu-based modern layouts to dismantling, waterproofing,
             plumbing, tiling, sanitary ware, and CP fittings, we provide{' '}
-            <strong>end-to-end renovation solutions</strong> tailored to your needs and budget.
+            end-to-end renovation solutions tailored to your needs and budget.
           </p>
           <p>
             Combining engineering expertise with contemporary design, we transform existing
             bathrooms in homes, apartments, offices, hotels, and other commercial spaces into{' '}
-            <strong>functional, elegant, and modern environments</strong> built for comfort,
+            functional, elegant, and modern environments built for comfort,
             quality, and durability.
           </p>
         </div>
@@ -184,18 +184,18 @@ export default function About({ onNavigate }) {
           <p className="eyebrow">From Existing Space to an Exceptional Bathroom</p>
           <div className="about-copy-stack">
             <p>
-              At <strong>NavKaya Baths</strong>, we transform bathrooms into well-planned,
+              At NavKaya Baths, we transform bathrooms into well-planned,
               functional and beautiful spaces. Every project begins with a detailed assessment
               of space, measurements, plumbing and everyday needs to ensure optimal space
               utilization, lasting comfort and modern aesthetics.
             </p>
             <p>
-              From <strong>2D/3D design to civil work, waterproofing, plumbing, electrical work,
-              tiling, sanitary fittings and final finishing</strong>, we manage every stage
+              From 2D/3D design to civil work, waterproofing, plumbing, electrical work,
+              tiling, sanitary fittings and final finishing, we manage every stage
               under one roof.
             </p>
             <p>
-              <strong>One Team. One Solution. Complete Peace of Mind.</strong> No hassle of
+              One Team. One Solution. Complete Peace of Mind. No hassle of
               coordinating multiple contractors, transparent stage-wise payments as work
               progresses, quality workmanship and warranty-backed renovation—all designed to
               deliver a durable, stylish bathroom with greater convenience and confidence.

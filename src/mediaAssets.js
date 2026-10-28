@@ -52,7 +52,7 @@ export const imageAssets = [
   '/assets/vanity-design.png',
   '/assets/vanity-partition-mirror-detail.png',
   '/assets/vanity-round-mirror-detail.png',
-  '/assets/workers-renovating-luxury-bathroom-poster.jpg',
+  '/assets/home-renovation-poster.jpg',
 ]
 
 const preloadedImages = new Map()

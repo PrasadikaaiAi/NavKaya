@@ -225,11 +225,6 @@ export default function About({ onNavigate }) {
           <p>
             To become a trusted leader in residential and commercial bathroom renovation by
             transforming existing spaces into modern, elegant, functional, and durable bathrooms.
-            We aim to combine innovative design, exceptional craftsmanship, and high-quality
-            materials to create spaces that offer comfort, style, and long-lasting performance.
-            With a strong commitment to quality and customer satisfaction, we strive to redefine
-            bathroom renovation standards and deliver spaces that enhance everyday living and
-            exceed expectations.
           </p>
         </article>
         <article
@@ -239,14 +234,9 @@ export default function About({ onNavigate }) {
           <p className="eyebrow">Our Mission</p>
           <h2>Designed with Purpose. Built with Precision.</h2>
           <p>
-            To deliver comprehensive, end-to-end bathroom renovation solutions by combining
-            engineering expertise, contemporary design, premium-quality materials, transparent
-            pricing, and professional execution. We are committed to transforming residential
-            and commercial bathrooms into stylish, functional, and durable spaces that meet
-            the unique needs of every client. Through meticulous planning, innovative solutions,
-            attention to detail, and seamless project management, we strive to ensure exceptional
-            craftsmanship, complete customer satisfaction, enhanced comfort, and lasting value
-            in every project we undertake.
+            To deliver end-to-end bathroom renovation solutions through engineering expertise,
+            contemporary design, quality materials, transparent pricing, and professional
+            execution—ensuring customer satisfaction, comfort, and lasting value.
           </p>
         </article>
       </section>

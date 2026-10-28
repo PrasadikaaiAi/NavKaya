@@ -139,23 +139,21 @@ export default function Home({ onNavigate }) {
     const updateVideo = () => {
       animationFrameId = 0
 
-      const scrollableDistance = Math.max(page.offsetHeight - window.innerHeight, 1)
-      const progress = clamp(-page.getBoundingClientRect().top / scrollableDistance, 0, 1)
+      // Include the header so the first scroll advances from the first frame.
+      const pageBottom = window.scrollY + page.getBoundingClientRect().top + page.offsetHeight
+      const scrollableDistance = Math.max(pageBottom - window.innerHeight, 1)
+      const progress = clamp(window.scrollY / scrollableDistance, 0, 1)
+
+      if (motionQuery.matches) return
 
       video.style.setProperty('--video-y', `${-70 * progress}px`)
       video.style.setProperty('--video-scale', `${1.04 + progress * 0.035}`)
 
-      if (
-        motionQuery.matches ||
-        !Number.isFinite(video.duration) ||
-        video.duration <= 0
-      ) {
-        return
-      }
+      if (document.hidden || !Number.isFinite(video.duration) || video.duration <= 0) return
 
-      const targetTime = progress * Math.max(video.duration - 0.08, 0)
-
-      if (Math.abs(video.currentTime - targetTime) > 0.05) {
+      const targetTime = progress * Math.max(video.duration - 1 / 24, 0)
+      // Finish the current seek, then catch up to the latest scroll position.
+      if (!video.seeking && Math.abs(video.currentTime - targetTime) > 1 / 48) {
         video.currentTime = targetTime
       }
     }
@@ -167,13 +165,22 @@ export default function Home({ onNavigate }) {
 
     video.pause()
     video.addEventListener('loadedmetadata', requestUpdate)
+    video.addEventListener('loadeddata', requestUpdate)
+    video.addEventListener('seeked', requestUpdate)
+    document.addEventListener('visibilitychange', requestUpdate)
+    motionQuery.addEventListener('change', requestUpdate)
     window.addEventListener('scroll', requestUpdate, { passive: true })
     window.addEventListener('resize', requestUpdate)
     requestUpdate()
 
     return () => {
       if (animationFrameId) window.cancelAnimationFrame(animationFrameId)
+      video.pause()
       video.removeEventListener('loadedmetadata', requestUpdate)
+      video.removeEventListener('loadeddata', requestUpdate)
+      video.removeEventListener('seeked', requestUpdate)
+      document.removeEventListener('visibilitychange', requestUpdate)
+      motionQuery.removeEventListener('change', requestUpdate)
       window.removeEventListener('scroll', requestUpdate)
       window.removeEventListener('resize', requestUpdate)
     }
@@ -272,8 +279,8 @@ export default function Home({ onNavigate }) {
       <video
         ref={scrollVideoRef}
         className="scroll-video"
-        src="/assets/workers-renovating-luxury-bathroom-1080p.mp4"
-        poster="/assets/workers-renovating-luxury-bathroom-poster.jpg"
+        src="/assets/home-renovation.mp4"
+        poster="/assets/home-renovation-poster.jpg"
         muted
         playsInline
         preload="auto"

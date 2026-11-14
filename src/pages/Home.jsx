@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import Footer from '../components/Footer.jsx'
 
+const mobileQuery = '(max-width: 767px), (hover: none) and (pointer: coarse)'
+const videoFrameRate = 24
+const videoEvents = ['loadedmetadata', 'loadeddata', 'canplay', 'seeked']
+const scrollSmoothingMs = 32
+
 const designs = [
   {
     slug: 'vanity',
@@ -88,9 +93,133 @@ const renderDesignDescription = (item) => {
   )
 }
 
+function HomeScrollBackground({ pageRef }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    const page = pageRef.current
+    if (!video || !page) return undefined
+
+    const mobile = window.matchMedia(mobileQuery)
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let scrollableDistance = 0
+    let displayedScroll = null
+    let previousFrameTime
+    let animationFrameId = 0
+    let priming = false
+    let disposed = false
+
+    const update = (frameTime) => {
+      animationFrameId = 0
+      if (document.hidden) return
+
+      const scrollY = window.scrollY
+      if (!scrollableDistance) {
+        const pageBottom = scrollY + page.getBoundingClientRect().top + page.offsetHeight
+        scrollableDistance = Math.max(pageBottom - window.innerHeight, 1)
+      }
+
+      const reduceMotion = motionQuery.matches
+      const targetScroll = reduceMotion
+        ? 0
+        : Math.min(Math.max(scrollY, 0), scrollableDistance)
+      if (displayedScroll === null || reduceMotion) displayedScroll = targetScroll
+
+      // Use elapsed time so the motion feels the same at different refresh rates.
+      const elapsed = previousFrameTime === undefined ? 16 : frameTime - previousFrameTime
+      const remaining = targetScroll - displayedScroll
+      displayedScroll = Math.abs(remaining) <= 0.5
+        ? targetScroll
+        : displayedScroll + remaining * -Math.expm1(-elapsed / scrollSmoothingMs)
+      previousFrameTime = displayedScroll === targetScroll ? undefined : frameTime
+      if (previousFrameTime !== undefined) requestUpdate()
+
+      const progress = Math.min(displayedScroll / scrollableDistance, 1)
+      video.style.setProperty('--video-y', `${-70 * progress}px`)
+      video.style.setProperty('--video-scale', 1.04 + progress * 0.035)
+
+      if (priming || video.seeking || video.readyState < video.HAVE_CURRENT_DATA) return
+      if (!Number.isFinite(video.duration) || video.duration <= 0) return
+
+      const targetTime = progress * Math.max(video.duration - 1 / videoFrameRate, 0)
+      const seekThreshold = targetTime === 0 ? 0 : 0.5 / videoFrameRate
+      if (Math.abs(video.currentTime - targetTime) > seekThreshold) {
+        video.currentTime = targetTime
+      }
+    }
+
+    const requestUpdate = () => {
+      if (!animationFrameId) animationFrameId = window.requestAnimationFrame(update)
+    }
+
+    const measureOnNextFrame = () => {
+      scrollableDistance = 0
+      requestUpdate()
+    }
+
+    const primeVideo = () => {
+      if (!mobile.matches || motionQuery.matches || document.hidden || priming) return
+      if (video.error || video.readyState >= video.HAVE_CURRENT_DATA) return
+
+      // Some mobile browsers need a playback request before decoding the first frame.
+      priming = true
+      video.play().then(() => {
+        if (!disposed) video.pause()
+      }).catch(() => {
+        // The first touch can retry if the browser blocks this initial request.
+      }).finally(() => {
+        priming = false
+        if (!disposed) requestUpdate()
+      })
+    }
+
+    const refresh = () => {
+      primeVideo()
+      measureOnNextFrame()
+    }
+
+    const layoutObserver = new ResizeObserver(measureOnNextFrame)
+    layoutObserver.observe(page)
+    layoutObserver.observe(document.body)
+    videoEvents.forEach((event) => video.addEventListener(event, requestUpdate))
+    motionQuery.addEventListener('change', refresh)
+    document.addEventListener('visibilitychange', refresh)
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', measureOnNextFrame)
+    window.addEventListener('touchend', primeVideo, { passive: true })
+    refresh()
+
+    return () => {
+      disposed = true
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId)
+      layoutObserver.disconnect()
+      video.pause()
+      videoEvents.forEach((event) => video.removeEventListener(event, requestUpdate))
+      motionQuery.removeEventListener('change', refresh)
+      document.removeEventListener('visibilitychange', refresh)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', measureOnNextFrame)
+      window.removeEventListener('touchend', primeVideo)
+    }
+  }, [pageRef])
+
+  return (
+    <video
+      ref={videoRef}
+      className="scroll-video"
+      src="/assets/home-renovation.mp4"
+      poster="/assets/home-renovation-poster.jpg"
+      preload="auto"
+      muted
+      playsInline
+      aria-label="NavKaya Baths home page bathroom showcase video"
+    />
+  )
+}
+
 export default function Home({ onNavigate }) {
   const homePageRef = useRef(null)
-  const scrollVideoRef = useRef(null)
   const whySectionRef = useRef(null)
   const homeParagraphPhotoRef = useRef(null)
   const [activeDesignIndex, setActiveDesignIndex] = useState(0)
@@ -124,67 +253,6 @@ export default function Home({ onNavigate }) {
 
     return () => window.clearInterval(carouselInterval)
   }, [isCarouselPaused])
-
-  useEffect(() => {
-    const page = homePageRef.current
-    const video = scrollVideoRef.current
-
-    if (!page || !video) return undefined
-
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    let animationFrameId = 0
-
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
-
-    const updateVideo = () => {
-      animationFrameId = 0
-
-      // Include the header so the first scroll advances from the first frame.
-      const pageBottom = window.scrollY + page.getBoundingClientRect().top + page.offsetHeight
-      const scrollableDistance = Math.max(pageBottom - window.innerHeight, 1)
-      const progress = clamp(window.scrollY / scrollableDistance, 0, 1)
-
-      if (motionQuery.matches) return
-
-      video.style.setProperty('--video-y', `${-70 * progress}px`)
-      video.style.setProperty('--video-scale', `${1.04 + progress * 0.035}`)
-
-      if (document.hidden || !Number.isFinite(video.duration) || video.duration <= 0) return
-
-      const targetTime = progress * Math.max(video.duration - 1 / 24, 0)
-      // Finish the current seek, then catch up to the latest scroll position.
-      if (!video.seeking && Math.abs(video.currentTime - targetTime) > 1 / 48) {
-        video.currentTime = targetTime
-      }
-    }
-
-    const requestUpdate = () => {
-      if (animationFrameId) return
-      animationFrameId = window.requestAnimationFrame(updateVideo)
-    }
-
-    video.pause()
-    video.addEventListener('loadedmetadata', requestUpdate)
-    video.addEventListener('loadeddata', requestUpdate)
-    video.addEventListener('seeked', requestUpdate)
-    document.addEventListener('visibilitychange', requestUpdate)
-    motionQuery.addEventListener('change', requestUpdate)
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', requestUpdate)
-    requestUpdate()
-
-    return () => {
-      if (animationFrameId) window.cancelAnimationFrame(animationFrameId)
-      video.pause()
-      video.removeEventListener('loadedmetadata', requestUpdate)
-      video.removeEventListener('loadeddata', requestUpdate)
-      video.removeEventListener('seeked', requestUpdate)
-      document.removeEventListener('visibilitychange', requestUpdate)
-      motionQuery.removeEventListener('change', requestUpdate)
-      window.removeEventListener('scroll', requestUpdate)
-      window.removeEventListener('resize', requestUpdate)
-    }
-  }, [])
 
   useEffect(() => {
     const section = whySectionRef.current
@@ -276,16 +344,7 @@ export default function Home({ onNavigate }) {
 
   return (
     <div className="page home-page" ref={homePageRef}>
-      <video
-        ref={scrollVideoRef}
-        className="scroll-video"
-        src="/assets/home-renovation.mp4"
-        poster="/assets/home-renovation-poster.jpg"
-        muted
-        playsInline
-        preload="auto"
-        aria-label="NavKaya Baths home page bathroom showcase video"
-      />
+      <HomeScrollBackground pageRef={homePageRef} />
 
       <div className="home-content">
         <section className="hero">

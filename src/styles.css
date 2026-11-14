@@ -232,6 +232,17 @@ button {
   animation: splash-fade 520ms ease 1.68s forwards;
 }
 
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  body.splash-lock {
+    overflow: visible;
+  }
+
+  .splash-screen {
+    animation-delay: 0s;
+    pointer-events: none;
+  }
+}
+
 .splash-screen::before,
 .splash-screen::after {
   content: '';
@@ -524,10 +535,6 @@ main {
   pointer-events: none;
   transition: opacity 280ms ease;
   will-change: transform;
-}
-
-.scroll-video.is-stopped {
-  opacity: 0;
 }
 
 .home-content {

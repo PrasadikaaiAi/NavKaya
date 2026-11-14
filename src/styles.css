@@ -238,7 +238,6 @@ button {
   }
 
   .splash-screen {
-    animation-delay: 0s;
     pointer-events: none;
   }
 }
